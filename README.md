@@ -1,2 +1,2 @@
-Data validation with pydantic
-# TodoApp
+
+# TodoApp with sqlite3
