@@ -45,23 +45,23 @@ def auth_user(username:str, password:str,db):
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="User not authorised")
     if not bcrypt_context.verify(password,user.hashed_password):
-        return False
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Wrong password')
     return user
 
 def create_acesstoken(username:str, user_id:str, expires_delta:timedelta):
-    encode ={'sub': username,'Id':user_id}
+    encode ={'sub': username,'id':user_id}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({'exp': expires})
     return jwt.encode(encode,SECRET_KEY,algorithm=ALGORITHM)
 
-async def current_user(token:Annotated[str,Depends(OAuth2PasswordBearer)]):
+async def current_user(token:Annotated[str,Depends(Oauth_bearer)]):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithm = ALGORITHM)
+        payload = jwt.decode(token, SECRET_KEY, algorithms = ALGORITHM)
         username :str = payload.get('sub')
         user_id :int = payload.get('id')
         if username is None or user_id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="User not authorised")
-        return {'username': username,'Id':user_id}
+        return {'username': username,'id':user_id}
     except JWTError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="User not authorised")
 
@@ -86,6 +86,6 @@ async def create_user(db:db_dependency, userRequest: CreateUserRequest):
 async def login_to_get_token(form_data: Annotated[OAuth2PasswordRequestForm,Depends()],db:db_dependency):
     user = auth_user(form_data.username,form_data.password,db)
     if not user:
-        return 'Failed'
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='User not Found')
     token = create_acesstoken(user.username,user.id,timedelta(minutes=20))
     return {'access_token':token, 'token_type':'bearer'}
