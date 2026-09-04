@@ -6,3 +6,5 @@ Added authentication with jwt
 Added pots,get and get by id after authorisation
 Added admin auth 
 Added user auth to get all data and update password
+Added alembic for database enhancement 
+Added update phone number option
