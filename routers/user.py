@@ -25,6 +25,8 @@ class userverify(BaseModel):
     password :str
     new_password : str = Field(min_length=6)
 
+class userphone(BaseModel):
+    new_phonenumber : str = Field(min_length=10)
 
 @router.get("/",status_code=status.HTTP_200_OK)
 async def read_all(user:user_dependency,db:db_dependency):
@@ -45,3 +47,13 @@ async def change_password(user:user_dependency,db:db_dependency,user_verify:user
     db.add(todo_model)
     db.commit()
 
+@router.put("/phone_number",status_code=status.HTTP_204_NO_CONTENT)
+async def change_phonenumbre(user:user_dependency,db:db_dependency,user_phone:userphone):
+    if user is None :
+        raise HTTPException(status_code=401,detail="user not authorised")
+    todo_model = db.query(Users).filter(Users.id==user.get('id')).first()
+    
+
+    todo_model.Phone_number=(user_phone.new_phonenumber)
+    db.add(todo_model)
+    db.commit()
