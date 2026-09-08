@@ -8,3 +8,4 @@ Added admin auth
 Added user auth to get all data and update password
 Added alembic for database enhancement 
 Added update phone number option
+Added pytest for testing
