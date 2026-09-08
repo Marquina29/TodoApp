@@ -1,5 +1,18 @@
-from database import Base
-from sqlalchemy import Column,INTEGER,String,Boolean
+from .database import Base
+from sqlalchemy import Column,INTEGER,String,Boolean,ForeignKey
+
+class Users(Base):
+    __tablename__= 'users'
+
+    id = Column(INTEGER,primary_key=True,index=True)
+    mail = Column(String,unique=True)
+    username = Column(String,unique=True)
+    first_name = Column(String)
+    last_name = Column(String)
+    hashed_password = Column(String)
+    is_active= Column(String,default=True)
+    role = Column(String)
+    Phone_number = Column(String)
 
 class Todos(Base):
     __tablename__ = 'todos'
@@ -9,3 +22,4 @@ class Todos(Base):
     description = Column(String)
     priority = Column(INTEGER)
     complete = Column(Boolean,default=False)
+    owner = Column(INTEGER, ForeignKey("users.id"))
